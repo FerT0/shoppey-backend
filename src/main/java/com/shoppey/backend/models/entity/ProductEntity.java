@@ -1,5 +1,6 @@
 package com.shoppey.backend.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,29 +18,28 @@ import org.hibernate.validator.constraints.Range;
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long product_id;
+    private Long id;
 
-    @NotBlank
-    private String product_name;
+    @Column(name = "product_name")
+    private String productName;
 
-    @NotBlank
-    private String product_description;
+    @Column(name = "product_description")
+    private String productDescription;
 
-    @NotNull(message= "price may not be empty")
-    @Range(min = 1)
-    private int product_price;
+    @Column(name = "product_price")
+    private double productPrice;
 
-    @NotBlank
-    private String product_picture;
+    @Column(name = "product_picture")
+    private String productPicture;
 
-    @NotNull(message= "posted_by may not be empty")
-    @Range(min = 1)
-    @Range(min = 1)
-    private Long posted_by;
-
-    @NotBlank
+    @Column(name = "category")
     private String category;
 
-    @NotBlank
+    @Column(name = "created_at")
     private String created_at;
+
+    @ManyToOne
+    @JoinColumn(name = "posted_by_id")
+    @JsonBackReference
+    private UserEntity postedBy;
 }

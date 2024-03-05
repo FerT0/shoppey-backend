@@ -1,5 +1,7 @@
 package com.shoppey.backend.controllers.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +10,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateProductDTO {
-    private String product_name;
-    private String product_description;
-    private int product_price;
-    private String product_picture;
-    private Long posted_by;
+    @NotBlank
+    private String productName;
+
+    @NotBlank
+    private String productDescription;
+
+    @NotNull
+    private double productPrice;
+
+    @NotBlank
+    private String productPicture;
+
+    @NotBlank
     private String category;
+
+    @NotNull
+    private Long postedByUserId;
 }
