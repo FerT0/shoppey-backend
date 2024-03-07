@@ -1,11 +1,10 @@
 package com.shoppey.backend.controllers.response;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.shoppey.backend.models.entity.UserEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +14,6 @@ public class ResponseProductDTO {
     private String productDescription;
     private double productPrice;
     private String category;
-    private String created_at;
+    private LocalDateTime created_at;
     private Long postedBy;
 }

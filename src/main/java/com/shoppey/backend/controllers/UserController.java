@@ -1,22 +1,18 @@
 package com.shoppey.backend.controllers;
 
+import com.shoppey.backend.controllers.exceptions.UserNotFoundException;
 import com.shoppey.backend.controllers.request.CreateUserDTO;
-import com.shoppey.backend.controllers.request.UpdateUserDTO;
 import com.shoppey.backend.controllers.response.ResponseUserDTO;
 import com.shoppey.backend.models.entity.UserEntity;
 import com.shoppey.backend.repositories.UserRepository;
-import com.shoppey.backend.services.IUser;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,25 +22,20 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private IUser userService;
+    private UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getAllUsers(){
-        List<UserEntity> users = (List<UserEntity>) userService.getAllUsers();
+        List<UserEntity> users = (List<UserEntity>) userRepository.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id){
-        Map<String, Object> response = new HashMap<>();
-        try {
-            UserEntity user = userService.findById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        } catch (DataAccessException e){
-            response.put("message", "couldn't find user");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PostMapping("createUser")
@@ -62,7 +53,7 @@ public class UserController {
                     .created_at(createdAt)
                     .build();
 
-            userService.create(userEntity);
+            userRepository.save(userEntity);
 
             ResponseUserDTO responseUserDTO = new ResponseUserDTO(
                     createUserDTO.getName(),
@@ -80,14 +71,11 @@ public class UserController {
     @DeleteMapping("deleteUser/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
         Map<String, Object> response = new HashMap<>();
-        try {
-            UserEntity userToDelete = userService.findById(id);
-            userService.deleteUser(userToDelete);
-            response.put("message", "successfully removed user with ID " + userToDelete.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (DataAccessException e){
-            response.put("message", "couldn't find user");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        UserEntity userToDelete = userRepository.findById(id).
+                orElseThrow(() -> new UserNotFoundException(id));
+        userRepository.delete(userToDelete);
+        response.put("message", "successfully removed user with ID " + userToDelete.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 }

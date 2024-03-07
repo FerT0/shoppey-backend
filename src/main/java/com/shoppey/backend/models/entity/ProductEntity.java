@@ -2,11 +2,8 @@ package com.shoppey.backend.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -36,7 +33,7 @@ public class ProductEntity {
     private String category;
 
     @Column(name = "created_at")
-    private String created_at;
+    private LocalDateTime created_at;
 
     @ManyToOne
     @JoinColumn(name = "posted_by_id")
